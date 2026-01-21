@@ -10,7 +10,28 @@ st.set_page_config(
 )
 
 st.title("💪 最大挙上重量（1RM）計算アプリ")
-st.write("重量と回数を入力すると、推定1RMを計算します。")
+st.write("筋トレ種目・重量・回数を入力すると、推定1RMを計算します。")
+
+# -----------------------------
+# 種目選択
+# -----------------------------
+st.subheader("トレーニング内容")
+
+exercise = st.selectbox(
+    "種目を選択してください",
+    [
+        "ベンチプレス",
+        "デッドリフト",
+        "スクワット",
+        "インクラインプレス",
+        "ショルダープレス",
+        "ローイング",
+        "アームカール",
+        "ハンマーカール",
+        "サイドレイズ",
+        "キックバック"
+    ]
+)
 
 # -----------------------------
 # 入力
@@ -36,29 +57,38 @@ formula = st.selectbox(
 )
 
 # -----------------------------
-# 計算
+# 計算関数
 # -----------------------------
 def calc_1rm(weight, reps, formula):
     if formula == "Epley式":
         return weight * (1 + reps / 30)
-    else:  # Brzycki
+    else:  # Brzycki式
         return weight * 36 / (37 - reps)
 
+# -----------------------------
+# 出力
+# -----------------------------
 if weight > 0 and reps > 0:
     one_rm = calc_1rm(weight, reps, formula)
 
-    # -----------------------------
-    # 出力
-    # -----------------------------
     st.subheader("結果")
+
+    st.markdown(f"### 🏋️ 種目: **{exercise}**")
+
     st.metric(
         label="推定1RM",
         value=f"{one_rm:.1f} kg"
     )
 
+    st.write("#### 参考重量（%1RM）")
+    col1, col2, col3 = st.columns(3)
+    col1.metric("70%", f"{one_rm * 0.7:.1f} kg")
+    col2.metric("80%", f"{one_rm * 0.8:.1f} kg")
+    col3.metric("90%", f"{one_rm * 0.9:.1f} kg")
+
     st.info(
         f"計算式: {formula}\n\n"
-        "※ 推定値であり、実測値とは誤差があります。"
+        "※ 1RMは推定値であり、実際の最大重量とは誤差があります。"
     )
 else:
     st.warning("重量と回数を入力してください。")
@@ -79,3 +109,4 @@ with st.expander("1RMとは？"):
 - **Brzycki式**  
   1RM = 重量 × 36 / (37 − 回数)
 """)
+
