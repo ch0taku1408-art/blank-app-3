@@ -1,8 +1,8 @@
 import streamlit as st
 from supabase import create_client
 
-url = st.secrets["SUPABASE_URL"]
-key = st.secrets["SUPABASE_KEY"]
+url = st.secrets["https://pxrwkgdrckcxtwspqapa.supabase.co"]
+key = st.secrets["eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InB4cndrZ2RyY2tjeHR3c3BxYXBhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjkxMzY3OTQsImV4cCI6MjA4NDcxMjc5NH0.Ipi-Pnhz8X7ARHrM1O5JXcvGnWxEhQCEXZ-dHSNxOmo"]
 
 supabase = create_client(url, key)
 
