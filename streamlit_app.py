@@ -9,7 +9,7 @@ supabase = create_client(url, key)
 st.write("Supabase test...")
 
 try:
-    test = supabase.table("your_table_name").select("*").limit(1).execute()
+    test = supabase.table("records").select("*").limit(1).execute()
     st.success("Supabase connected!")
     st.write(test.data)
 except Exception as e:
