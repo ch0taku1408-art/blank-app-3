@@ -6,14 +6,7 @@ key = st.secrets["SUPABASE_KEY"]
 
 supabase = create_client(url, key)
 
-st.write("Supabase test...")
 
-try:
-    test = supabase.table("records").select("*").limit(1).execute()
-    st.success("Supabase connected!")
-    st.write(test.data)
-except Exception as e:
-    st.error(e)
 # -----------------------------
 # ページ設定
 # -----------------------------
