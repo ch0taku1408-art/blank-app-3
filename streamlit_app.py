@@ -1,3 +1,5 @@
+import streamlit as st
+from supabase import create_clien
 st.write("Supabase test...")
 
 try:
@@ -7,8 +9,7 @@ try:
 except Exception as e:
     st.error(e)
 
-import streamlit as st
-from supabase import create_client
+
 
 url = st.secrets["SUPABASE_URL"]
 key = st.secrets["SUPABASE_KEY"]
