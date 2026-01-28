@@ -1,5 +1,5 @@
 import streamlit as st
-from supabase import create_clien
+from supabase import create_client
 st.write("Supabase test...")
 
 try:
