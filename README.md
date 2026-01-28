@@ -1,19 +1,39 @@
-# 🎈 Blank app template
+# 💪 最大挙上重量（1RM）計算アプリ
 
-A simple Streamlit app template for you to modify!
+## 🌐 デモURL
+https://blank-app-jerh8wa8b78.streamlit.app/
 
-[![Open in Streamlit](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://blank-app-template.streamlit.app/)
+## 🧩 このアプリは何？
+このアプリは〇〇を推定・記録するためのStreamlitアプリです。
 
-### How to run it on your own machine
+## ✨ できること
+- 〇〇を入力すると△△を推定
+- 記録を保存できる
+- グラフ表示ができる
+- 種目を選択できる
 
-1. Install the requirements
+## 🖥️ 使い方
+1. 数値を入力
+2. 種目を選択
+3. 保存ボタンを押す
+4. 記録が表示される
 
-   ```
-   $ pip install -r requirements.txt
-   ```
+## 📸 画面イメージ
+（スクショ）
 
-2. Run the app
+## 🧠 使用している推定式
+このアプリでは以下の推定式を使用しています。
 
-   ```
-   $ streamlit run streamlit_app.py
-   ```
+- Epley式: ...
+- Brzycki式: ...
+
+## 🛠️ 使用技術
+- Python
+- Streamlit
+- Supabase
+- pandas
+
+## 🚀 ローカルで動かす方法
+```bash
+pip install -r requirements.txt
+streamlit run streamlit_app.py
