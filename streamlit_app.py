@@ -85,6 +85,14 @@ def calc_1rm(weight, reps, formula):
 if weight > 0 and reps > 0:
     one_rm = calc_1rm(weight, reps, formula)
 
+    supabase.table("records").insert({
+    "exercise": exercise,
+    "weight": weight,
+    "reps": reps,
+    "one_rm": float(one_rm)
+    }).execute()
+
+    st.success("記録をSupabaseに保存しました！")
     st.subheader("結果")
 
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
