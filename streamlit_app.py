@@ -1,3 +1,12 @@
+st.write("Supabase test...")
+
+try:
+    test = supabase.table("your_table_name").select("*").limit(1).execute()
+    st.success("Supabase connected!")
+    st.write(test.data)
+except Exception as e:
+    st.error(e)
+
 import streamlit as st
 from supabase import create_client
 
