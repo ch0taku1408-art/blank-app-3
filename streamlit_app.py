@@ -3,9 +3,11 @@ from supabase import create_client
 
 url = st.secrets["SUPABASE_URL"]
 key = st.secrets["SUPABASE_KEY"]
-
 supabase = create_client(url, key)
 
+# 二重保存防止フラグ
+if "saved" not in st.session_state:
+    st.session_state.saved = False
 
 # -----------------------------
 # ページ設定
@@ -27,16 +29,10 @@ st.subheader("トレーニング内容")
 exercise = st.selectbox(
     "種目を選択してください",
     [
-        "ベンチプレス",
-        "デッドリフト",
-        "スクワット",
-        "インクラインプレス",
-        "ショルダープレス",
-        "ローイング",
-        "アームカール",
-        "ハンマーカール",
-        "サイドレイズ",
-        "キックバック"
+        "ベンチプレス","デッドリフト","スクワット",
+        "インクラインプレス","ショルダープレス",
+        "ローイング","アームカール","ハンマーカール",
+        "サイドレイズ","キックバック"
     ]
 )
 
@@ -45,23 +41,10 @@ exercise = st.selectbox(
 # -----------------------------
 st.subheader("入力")
 
-weight = st.number_input(
-    "使用重量 (kg)",
-    min_value=0.0,
-    step=2.5
-)
+weight = st.number_input("使用重量 (kg)", min_value=0.0, step=2.5)
+reps = st.number_input("回数", min_value=1, max_value=20, step=1)
 
-reps = st.number_input(
-    "回数",
-    min_value=1,
-    max_value=20,
-    step=1
-)
-
-formula = st.selectbox(
-    "計算式を選択",
-    ["Epley式", "Brzycki式"]
-)
+formula = st.selectbox("計算式を選択", ["Epley式", "Brzycki式"])
 
 # -----------------------------
 # 計算関数
@@ -69,7 +52,7 @@ formula = st.selectbox(
 def calc_1rm(weight, reps, formula):
     if formula == "Epley式":
         return weight * (1 + reps / 30)
-    else:  # Brzycki式
+    else:
         return weight * 36 / (37 - reps)
 
 # -----------------------------
@@ -78,28 +61,34 @@ def calc_1rm(weight, reps, formula):
 if weight > 0 and reps > 0:
     one_rm = calc_1rm(weight, reps, formula)
 
-    supabase.table("records").insert({
-    "exercise": exercise,
-    "weight": weight,
-    "reps": reps,
-    "one_rm": float(one_rm)
-    }).execute()
-
-    st.success("記録をSupabaseに保存しました！")
     st.subheader("結果")
-
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
-
-    st.metric(
-        label="推定1RM",
-        value=f"{one_rm:.1f} kg"
-    )
+    st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
 
     st.write("#### 参考重量（%1RM）")
     col1, col2, col3 = st.columns(3)
     col1.metric("70%", f"{one_rm * 0.7:.1f} kg")
     col2.metric("80%", f"{one_rm * 0.8:.1f} kg")
     col3.metric("90%", f"{one_rm * 0.9:.1f} kg")
+
+    # -----------------------------
+    # 保存処理
+    # -----------------------------
+    if st.button("この結果を保存する"):
+        try:
+            supabase.table("records").insert({
+                "exercise": exercise,
+                "weight": weight,
+                "reps": reps,
+                "one_rm": float(one_rm)
+            }).execute()
+            st.session_state.saved = True
+        except Exception as e:
+            st.error(e)
+
+    if st.session_state.saved:
+        st.success("記録をSupabaseに保存しました！")
+        st.session_state.saved = False
 
     st.info(
         f"計算式: {formula}\n\n"
@@ -109,12 +98,37 @@ else:
     st.warning("重量と回数を入力してください。")
 
 # -----------------------------
+# 履歴表示（追加部分）
+# -----------------------------
+st.divider()
+st.subheader("📊 過去の記録")
+
+try:
+    records = supabase.table("records").select("*").order("id", desc=True).limit(10).execute().data
+
+    if records:
+        for r in records:
+            st.write(
+                f"{r['created_at']} ｜ {r['exercise']} ｜ "
+                f"{r['weight']}kg × {r['reps']}回 → 1RM: {r['one_rm']:.1f}kg"
+            )
+    else:
+        st.info("まだ記録がありません。")
+
+except Exception as e:
+    st.error(e)
+
+# -----------------------------
 # 補足説明
 # -----------------------------
 with st.expander("1RMとは？"):
     st.write("""
 **1RM（One Repetition Maximum）**とは、
 ある種目を「1回だけ」持ち上げられる最大重量のことです。
+
+- **Epley式**: 1RM = 重量 × (1 + 回数 / 30)
+- **Brzycki式**: 1RM = 重量 × 36 / (37 − 回数)
+""")
 
 このアプリでは、以下の推定式を使用しています。
 
