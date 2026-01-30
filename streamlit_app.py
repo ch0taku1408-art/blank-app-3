@@ -107,7 +107,7 @@ if weight > 0 and reps > 0:
                 muscles = [m["name"] for m in ex["muscles"]]
                 return description, category, muscles
 
-    return None, None, None
+     return None, None, None
 
 
     # -----------------------------
