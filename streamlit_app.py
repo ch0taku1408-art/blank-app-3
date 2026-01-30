@@ -1,8 +1,8 @@
 import streamlit as st
 from supabase import create_client
-from openai import OpenAI
 
-client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
+
+
 url = st.secrets["SUPABASE_URL"]
 key = st.secrets["SUPABASE_KEY"]
 supabase = create_client(url, key)
@@ -57,34 +57,8 @@ def calc_1rm(weight, reps, formula):
     else:
         return weight * 36 / (37 - reps)
 # -----------------------------
-# AIメニュー生成関数
-# -----------------------------
-def generate_training_menu(exercise, one_rm):
-    prompt = f"""
-あなたは優秀なパーソナルトレーナーです。
 
-ユーザーのトレーニング種目は「{exercise}」で、
-推定1RMは {one_rm:.1f} kg です。
-
-この人に最適な週3回のトレーニングメニューを作成してください。
-
-以下を必ず含めてください：
-・セット数
-・回数
-・使用重量（%1RMで）
-・インターバル時間
-・フォームや安全面の注意点
-
-初心者にもわかりやすい日本語で説明してください。
-"""
-
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-        temperature=0.7,
-    )
-
-    return response.choices[0].message.content
+   
 
 # -----------------------------
 # 出力
@@ -96,15 +70,7 @@ if weight > 0 and reps > 0:
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
     # -----------------------------
-    # AIトレーニングメニュー生成
-    # -----------------------------
-    st.divider()
-    st.subheader("🤖 AIトレーナーによるメニュー提案")
-
-    if st.button("AIにトレーニングメニューを作ってもらう"):
-        with st.spinner("AIがあなた専用メニューを作成中..."):
-            ai_menu = generate_training_menu(exercise, one_rm)
-            st.markdown(ai_menu)
+    
     st.write("#### 参考重量（%1RM）")
     col1, col2, col3 = st.columns(3)
     col1.metric("70%", f"{one_rm * 0.7:.1f} kg")
