@@ -95,7 +95,7 @@ if weight > 0 and reps > 0:
     st.subheader("結果")
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
-　　    # -----------------------------
+    # -----------------------------
     # AIトレーニングメニュー生成
     # -----------------------------
     st.divider()
