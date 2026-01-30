@@ -71,7 +71,24 @@ def calc_1rm(weight, reps, formula):
     else:
         return weight * 36 / (37 - reps)
 # -----------------------------
-# -----------------------------
+def get_exercise_info(exercise_name_en):
+    url = "https://wger.de/api/v2/exerciseinfo/"
+    params = {"limit": 200}
+
+    response = requests.get(url, params=params)
+    data = response.json()["results"]
+
+    for ex in data:
+        for t in ex["translations"]:
+            name = t["name"]
+            description = t["description"]
+
+            if exercise_name_en.lower() in name.lower():
+                category = ex["category"]["name"]
+                muscles = [m["name"] for m in ex["muscles"]]
+                return description, category, muscles
+
+    return None, None, None
 
    
 
@@ -84,8 +101,6 @@ if weight > 0 and reps > 0:
     st.subheader("結果")
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
-        # -----------------------------
-    # -----------------------------
         # -----------------------------
     # 種目の詳細情報（Wger）
     # -----------------------------
@@ -101,28 +116,8 @@ if weight > 0 and reps > 0:
         st.markdown(desc, unsafe_allow_html=True)
     else:
         st.info("この種目の詳細情報は見つかりませんでした。")
-
-    # -----------------------------
-    def get_exercise_info(exercise_name_en):
-     url = "https://wger.de/api/v2/exerciseinfo/"
-     params = {
-        "limit": 200
-      }
-
-     response = requests.get(url, params=params)
-     data = response.json()["results"]
-
-     for ex in data:
-        for t in ex["translations"]:
-            name = t["name"]
-            description = t["description"]
-
-            if exercise_name_en.lower() in name.lower():
-                category = ex["category"]["name"]
-                muscles = [m["name"] for m in ex["muscles"]]
-                return description, category, muscles
-
-     return None, None, None
+   
+    
 
 
     # -----------------------------
