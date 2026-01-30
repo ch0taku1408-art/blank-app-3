@@ -123,14 +123,14 @@ if weight > 0 and reps > 0:
     desc, category, muscles = get_exercise_info(exercise_en)
 
     if desc:
-    desc_ja = translate_to_japanese(desc)
-    muscles_ja = translate_to_japanese(", ".join(muscles))
-    category_ja = translate_to_japanese(category)
+     desc_ja = translate_to_japanese(desc)
+     muscles_ja = translate_to_japanese(", ".join(muscles))
+     category_ja = translate_to_japanese(category)
 
-    st.markdown(f"**カテゴリ:** {category_ja}")
-    st.markdown(f"**主に使う筋肉:** {muscles_ja}")
-    st.markdown("**種目の説明:**")
-    st.markdown(desc_ja, unsafe_allow_html=True)
+     st.markdown(f"**カテゴリ:** {category_ja}")
+     st.markdown(f"**主に使う筋肉:** {muscles_ja}")
+     st.markdown("**種目の説明:**")
+     st.markdown(desc_ja, unsafe_allow_html=True)
 
     else:
         st.info("この種目の詳細情報は見つかりませんでした。")
