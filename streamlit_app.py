@@ -105,7 +105,7 @@ if weight > 0 and reps > 0:
         with st.spinner("AIがあなた専用メニューを作成中..."):
             ai_menu = generate_training_menu(exercise, one_rm)
             st.markdown(ai_menu)
-　  st.write("#### 参考重量（%1RM）")
+    st.write("#### 参考重量（%1RM）")
     col1, col2, col3 = st.columns(3)
     col1.metric("70%", f"{one_rm * 0.7:.1f} kg")
     col2.metric("80%", f"{one_rm * 0.8:.1f} kg")
