@@ -72,26 +72,6 @@ def calc_1rm(weight, reps, formula):
         return weight * 36 / (37 - reps)
 # -----------------------------
 # -----------------------------
-# Wger API から種目情報を取得
-# -----------------------------
-def get_exercise_info(exercise_name_en):
-    url = "https://wger.de/api/v2/exerciseinfo/"
-    params = {
-        "language": 2,  # 英語
-        "limit": 200
-    }
-
-    response = requests.get(url, params=params)
-    data = response.json()["results"]
-
-    for ex in data:
-        if exercise_name_en.lower() in ex["name"].lower():
-            description = ex["description"]
-            category = ex["category"]["name"]
-            muscles = [m["name"] for m in ex["muscles"]]
-            return description, category, muscles
-
-    return None, None, None
 
    
 
@@ -105,20 +85,30 @@ if weight > 0 and reps > 0:
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
         # -----------------------------
-    # 種目の詳細情報（Wger API）
     # -----------------------------
-    st.divider()
-    st.subheader("📚 種目の詳細情報")
+    # Wger API から種目情報を取得（修正版）
+    # -----------------------------
+    def get_exercise_info(exercise_name_en):
+     url = "https://wger.de/api/v2/exerciseinfo/"
+     params = {
+        "limit": 200
+      }
 
-    desc, category, muscles = get_exercise_info(exercise_en)
+     response = requests.get(url, params=params)
+     data = response.json()["results"]
 
-    if desc:
-        st.markdown(f"**カテゴリ:** {category}")
-        st.markdown(f"**主に使う筋肉:** {', '.join(muscles)}")
-        st.markdown("**種目の説明:**")
-        st.markdown(desc, unsafe_allow_html=True)
-    else:
-        st.info("この種目の詳細情報は見つかりませんでした。")
+     for ex in data:
+        for t in ex["translations"]:
+            name = t["name"]
+            description = t["description"]
+
+            if exercise_name_en.lower() in name.lower():
+                category = ex["category"]["name"]
+                muscles = [m["name"] for m in ex["muscles"]]
+                return description, category, muscles
+
+    return None, None, None
+
 
     # -----------------------------
     
