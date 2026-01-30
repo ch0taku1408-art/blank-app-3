@@ -86,7 +86,22 @@ if weight > 0 and reps > 0:
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
         # -----------------------------
     # -----------------------------
-    # Wger API から種目情報を取得（修正版）
+        # -----------------------------
+    # 種目の詳細情報（Wger）
+    # -----------------------------
+    st.divider()
+    st.subheader("📚 種目の詳細情報")
+
+    desc, category, muscles = get_exercise_info(exercise_en)
+
+    if desc:
+        st.markdown(f"**カテゴリ:** {category}")
+        st.markdown(f"**主に使う筋肉:** {', '.join(muscles)}")
+        st.markdown("**種目の説明:**")
+        st.markdown(desc, unsafe_allow_html=True)
+    else:
+        st.info("この種目の詳細情報は見つかりませんでした。")
+
     # -----------------------------
     def get_exercise_info(exercise_name_en):
      url = "https://wger.de/api/v2/exerciseinfo/"
