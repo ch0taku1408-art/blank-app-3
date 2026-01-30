@@ -1,5 +1,6 @@
 import streamlit as st
 from supabase import create_client
+import requests
 
 
 
@@ -29,6 +30,21 @@ st.write("筋トレ種目・重量・回数を入力すると、推定1RMを計�
 st.subheader("トレーニング内容")
 
 exercise = st.selectbox(
+    exercise_map = {
+    "ベンチプレス": "bench press",
+    "デッドリフト": "deadlift",
+    "スクワット": "squat",
+    "インクラインプレス": "incline press",
+    "ショルダープレス": "shoulder press",
+    "ローイング": "rowing",
+    "アームカール": "biceps curl",
+    "ハンマーカール": "hammer curl",
+    "サイドレイズ": "lateral raise",
+    "キックバック": "triceps kickback"
+}
+
+exercise_en = exercise_map[exercise]
+
     "種目を選択してください",
     [
         "ベンチプレス","デッドリフト","スクワット",
@@ -57,6 +73,27 @@ def calc_1rm(weight, reps, formula):
     else:
         return weight * 36 / (37 - reps)
 # -----------------------------
+# -----------------------------
+# Wger API から種目情報を取得
+# -----------------------------
+def get_exercise_info(exercise_name_en):
+    url = "https://wger.de/api/v2/exerciseinfo/"
+    params = {
+        "language": 2,  # 英語
+        "limit": 200
+    }
+
+    response = requests.get(url, params=params)
+    data = response.json()["results"]
+
+    for ex in data:
+        if exercise_name_en.lower() in ex["name"].lower():
+            description = ex["description"]
+            category = ex["category"]["name"]
+            muscles = [m["name"] for m in ex["muscles"]]
+            return description, category, muscles
+
+    return None, None, None
 
    
 
@@ -69,6 +106,22 @@ if weight > 0 and reps > 0:
     st.subheader("結果")
     st.markdown(f"### 🏋️ 種目: **{exercise}**")
     st.metric(label="推定1RM", value=f"{one_rm:.1f} kg")
+        # -----------------------------
+    # 種目の詳細情報（Wger API）
+    # -----------------------------
+    st.divider()
+    st.subheader("📚 種目の詳細情報")
+
+    desc, category, muscles = get_exercise_info(exercise_en)
+
+    if desc:
+        st.markdown(f"**カテゴリ:** {category}")
+        st.markdown(f"**主に使う筋肉:** {', '.join(muscles)}")
+        st.markdown("**種目の説明:**")
+        st.markdown(desc, unsafe_allow_html=True)
+    else:
+        st.info("この種目の詳細情報は見つかりませんでした。")
+
     # -----------------------------
     
     st.write("#### 参考重量（%1RM）")
